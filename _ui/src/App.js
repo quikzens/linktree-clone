@@ -1,7 +1,26 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { UserProvider } from './contexts/UserContext'
+
+import PrivatePage from './pages/PrivateRoute'
+import Home from './pages/Home/Home'
+import Admin from './pages/Admin/Admin'
+
 export default function App() {
   return (
-    <div className="app">
-      <h1>App</h1>
-    </div>
+    <UserProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/admin"
+            element={
+              <PrivatePage>
+                <Admin />
+              </PrivatePage>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
   )
 }
