@@ -11,5 +11,6 @@ func SetRoutes(router *gin.Engine) {
 	auth.GET("/login/:provider", user.Login)
 	auth.GET("/callback/:provider", user.Callback)
 
-	// api := router.Group("/api")
+	api := router.Group("/api")
+	api.GET("/user/auth", user.VerifyAuth, user.CheckAuth)
 }
