@@ -74,3 +74,15 @@ func Callback(c *gin.Context) {
 	c.Status(http.StatusTemporaryRedirect)
 	c.Header("Location", "/")
 }
+
+// CheckAuth is validate a user session from it's token and return it's authenticated user data
+func CheckAuth(c *gin.Context) {
+	payload, _ := c.Get("user")
+	userPayload, _ := payload.(*util.UserPayload)
+
+	util.SendSuccess(c, gin.H{
+		"user_name":       userPayload.Name,
+		"user_email":      userPayload.Email,
+		"user_avatar_url": userPayload.AvatarUrl,
+	})
+}
