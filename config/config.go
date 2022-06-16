@@ -12,6 +12,7 @@ var (
 	ServerAddress      string
 	SecretKey          string
 	DBSource           string
+	DBName             string
 	GoogleClientID     string
 	GoogleClientSecret string
 	GoogleRedirectUrl  string
