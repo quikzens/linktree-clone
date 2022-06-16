@@ -2,9 +2,12 @@ package user
 
 import (
 	"fmt"
+	"linktree-clone/util"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/objx"
 )
@@ -54,13 +57,20 @@ func Callback(c *gin.Context) {
 		return
 	}
 
-	authCookieValue := objx.New(map[string]interface{}{
-		"name":       user.Name(),
-		"email":      user.Email(),
-		"avatar_url": user.AvatarURL(),
-	}).MustBase64()
+	token, _, err := util.CreateToken(&util.UserPayload{
+		ID:        uuid.NewString(),
+		Name:      user.Name(),
+		Email:     user.Email(),
+		AvatarUrl: user.AvatarURL(),
+		IssuedAt:  time.Now(),
+		ExpiredAt: time.Now().Add(24 * time.Hour),
+	})
+	if err != nil {
+		util.SendServerError(c, err)
+		return
+	}
 
-	c.SetCookie("auth", authCookieValue, 60*15, "/", "", false, true)
+	c.SetCookie("auth", token, 60*60*24, "/", "", false, true)
 	c.Status(http.StatusTemporaryRedirect)
 	c.Header("Location", "/")
 }
