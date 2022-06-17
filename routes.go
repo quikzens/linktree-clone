@@ -13,5 +13,7 @@ func SetRoutes(router *gin.Engine) {
 	auth.GET("/logout", user.Logout)
 
 	api := router.Group("/api")
+
 	api.GET("/user/auth", user.VerifyAuth, user.CheckAuth)
+
 }

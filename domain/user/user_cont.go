@@ -1,15 +1,20 @@
 package user
 
 import (
+	"context"
 	"fmt"
+	"linktree-clone/db"
 	"linktree-clone/util"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/objx"
+	"go.mongodb.org/mongo-driver/mongo"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func Login(c *gin.Context) {
@@ -50,18 +55,41 @@ func Callback(c *gin.Context) {
 		return
 	}
 
-	user, err := provider.GetUser(creds)
+	userData, err := provider.GetUser(creds)
 	if err != nil {
 		c.String(http.StatusInternalServerError, fmt.Sprintf("Error when trying to get user from %s: %s", provider, err))
 		c.Abort()
 		return
 	}
 
+	// if it's a new user (check by email address):
+	// create new document in db to keep it's links
+	err = db.UserColl.FindOne(context.TODO(), bson.M{"email": userData.Email()}).Decode(&bson.M{})
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			_, err := db.UserColl.InsertOne(context.TODO(), user{
+				ID:        uuid.NewString(),
+				Username:  strings.ReplaceAll(strings.ToLower(userData.Name()), " ", "_"),
+				Email:     userData.Email(),
+				Links:     []string{},
+				CreatedAt: time.Now().Unix(),
+				UpdatedAt: 0,
+			})
+			if err != nil {
+				util.SendServerError(c, err)
+				return
+			}
+		} else {
+			util.SendServerError(c, err)
+			return
+		}
+	}
+
 	token, _, err := util.CreateToken(&util.UserPayload{
 		ID:        uuid.NewString(),
-		Name:      user.Name(),
-		Email:     user.Email(),
-		AvatarUrl: user.AvatarURL(),
+		Name:      userData.Name(),
+		Email:     userData.Email(),
+		AvatarUrl: userData.AvatarURL(),
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(24 * time.Hour),
 	})

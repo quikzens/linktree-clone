@@ -28,6 +28,7 @@ func init() {
 	ServerAddress = os.Getenv("SERVER_ADDRESS")
 	SecretKey = os.Getenv("SECRET_KEY")
 	DBSource = os.Getenv("DB_SOURCE")
+	DBName = os.Getenv("DB_NAME")
 	GoogleClientID = os.Getenv("GOOGLE_CLIENT_ID")
 	GoogleClientSecret = os.Getenv("GOOGLE_CLIENT_SECRET")
 	GoogleRedirectUrl = os.Getenv("GOOGLE_REDIRECT_URL")
