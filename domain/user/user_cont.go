@@ -69,7 +69,7 @@ func Callback(c *gin.Context) {
 		if err == mongo.ErrNoDocuments {
 			_, err := db.UserColl.InsertOne(context.TODO(), user{
 				ID:        uuid.NewString(),
-				Username:  strings.ReplaceAll(strings.ToLower(userData.Name()), " ", "_"),
+				Username:  strings.ReplaceAll(strings.ToLower(userData.Name()), " ", "_") + util.RandomString(10),
 				Email:     userData.Email(),
 				Links:     []string{},
 				CreatedAt: time.Now().Unix(),
