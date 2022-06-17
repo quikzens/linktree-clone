@@ -14,6 +14,7 @@ import (
 // Mongo Collection
 var (
 	UserColl = DB.Collection("user")
+	LinkColl = DB.Collection("link")
 )
 
 // DB Instance

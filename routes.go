@@ -1,6 +1,7 @@
 package main
 
 import (
+	"linktree-clone/domain/link"
 	"linktree-clone/domain/user"
 
 	"github.com/gin-gonic/gin"
@@ -16,4 +17,5 @@ func SetRoutes(router *gin.Engine) {
 
 	api.GET("/user/auth", user.VerifyAuth, user.CheckAuth)
 
+	api.POST("/link", user.VerifyAuth, link.CreateLink)
 }
