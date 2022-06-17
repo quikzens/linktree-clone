@@ -18,12 +18,13 @@ func CreateLink(c *gin.Context) {
 
 	newLinkID := uuid.NewString()
 	newLink := link{
-		ID:        newLinkID,
-		Title:     "Title",
-		Url:       "Url",
-		IsActive:  false,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: 0,
+		ID:         newLinkID,
+		EmailOwner: userEmail,
+		Title:      "Title",
+		Url:        "Url",
+		IsActive:   true,
+		CreatedAt:  time.Now().Unix(),
+		UpdatedAt:  0,
 	}
 	_, err := db.LinkColl.InsertOne(context.TODO(), newLink)
 	if err != nil {

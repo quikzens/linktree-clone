@@ -1,12 +1,13 @@
 package link
 
 type link struct {
-	ID        string `bson:"id" json:"id"`
-	Title     string `bson:"title" json:"title"`
-	Url       string `bson:"url" json:"url"`
-	IsActive  bool   `bson:"is_active" json:"is_active"`
-	CreatedAt int64  `bson:"created_at" json:"created_at"`
-	UpdatedAt int64  `bson:"updated_at" json:"updated_at"`
+	ID         string `bson:"id" json:"id"`
+	EmailOwner string `bson:"email_owner" json:"email_owner"`
+	Title      string `bson:"title" json:"title"`
+	Url        string `bson:"url" json:"url"`
+	IsActive   bool   `bson:"is_active" json:"is_active"`
+	CreatedAt  int64  `bson:"created_at" json:"created_at"`
+	UpdatedAt  int64  `bson:"updated_at" json:"updated_at"`
 }
 
 type updateLinkRequest struct {
