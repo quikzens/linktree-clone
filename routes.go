@@ -20,4 +20,5 @@ func SetRoutes(router *gin.Engine) {
 
 	api.POST("/link", user.VerifyAuth, link.CreateLink)
 	api.PATCH("/link/:id", user.VerifyAuth, link.UpdateLink)
+	api.DELETE("/link/:id", user.VerifyAuth, link.DeleteLink)
 }
