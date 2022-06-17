@@ -11,9 +11,10 @@ type link struct {
 }
 
 type updateLinkRequest struct {
-	Title    string `json:"title" bson:"title,omitempty"`
-	Url      string `json:"url" bson:"url,omitempty"`
-	IsActive bool   `json:"is_active" bson:"is_active,omitempty"`
+	Title     string `json:"title" bson:"title,omitempty"`
+	Url       string `json:"url" bson:"url,omitempty"`
+	IsActive  bool   `json:"is_active" bson:"is_active,omitempty"`
+	UpdatedAt int64  `bson:"updated_at"`
 }
 
 type userLinks struct {

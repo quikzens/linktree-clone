@@ -19,4 +19,5 @@ func SetRoutes(router *gin.Engine) {
 	api.GET("/user/:username", user.GetUser)
 
 	api.POST("/link", user.VerifyAuth, link.CreateLink)
+	api.PATCH("/link/:id", user.VerifyAuth, link.UpdateLink)
 }

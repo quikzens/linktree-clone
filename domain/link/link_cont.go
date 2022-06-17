@@ -2,6 +2,7 @@ package link
 
 import (
 	"context"
+	"errors"
 	"linktree-clone/db"
 	"linktree-clone/util"
 	"time"
@@ -53,4 +54,39 @@ func CreateLink(c *gin.Context) {
 	}
 
 	util.SendSuccess(c, newLink)
+}
+
+func UpdateLink(c *gin.Context) {
+	payload, _ := c.Get("user")
+	userPayload, _ := payload.(*util.UserPayload)
+	userEmail := userPayload.Email
+	linkID := c.Param("id")
+
+	var req updateLinkRequest
+	err := c.Bind(&req)
+	if err != nil {
+		util.SendBadRequest(c, err)
+		return
+	}
+
+	var link link
+	err = db.LinkColl.FindOne(context.TODO(), bson.M{"id": linkID}).Decode(&link)
+	if err != nil {
+		util.SendServerError(c, err)
+		return
+	}
+
+	if link.EmailOwner != userEmail {
+		util.SendBadRequest(c, errors.New("the link is not belong to this user"))
+		return
+	}
+
+	req.UpdatedAt = time.Now().Unix()
+	_, err = db.LinkColl.UpdateOne(context.TODO(), bson.M{"id": linkID}, bson.M{"$set": req})
+	if err != nil {
+		util.SendServerError(c, err)
+		return
+	}
+
+	util.SendSuccess(c, nil)
 }
