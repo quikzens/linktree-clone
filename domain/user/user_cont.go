@@ -120,3 +120,34 @@ func CheckAuth(c *gin.Context) {
 		"user_avatar_url": userPayload.AvatarUrl,
 	})
 }
+
+func GetUser(c *gin.Context) {
+	username := c.Param("username")
+
+	var user user
+	err := db.UserColl.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		util.SendServerError(c, err)
+		return
+	}
+
+	userLinks := []linkResponse{}
+	for _, linkID := range user.Links {
+		var link linkResponse
+		err := db.LinkColl.FindOne(context.TODO(), bson.M{"id": linkID}).Decode(&link)
+		if err != nil {
+			util.SendServerError(c, err)
+			return
+		}
+		userLinks = append(userLinks, link)
+	}
+
+	util.SendSuccess(c, userResponse{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		Links:     userLinks,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	})
+}
