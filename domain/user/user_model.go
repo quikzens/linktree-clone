@@ -5,6 +5,7 @@ type user struct {
 	Username  string   `bson:"username"`
 	Email     string   `bson:"email"`
 	Links     []string `bson:"links"`
+	AvatarURL string   `bson:"avatar_url"`
 	CreatedAt int64    `bson:"created_at"`
 	UpdatedAt int64    `bson:"updated_at"`
 }
@@ -14,6 +15,7 @@ type userResponse struct {
 	Username  string         `bson:"username" json:"username"`
 	Email     string         `bson:"email" json:"email"`
 	Links     []linkResponse `bson:"links" json:"links"`
+	AvatarURL string         `bson:"avatar_url" json:"avatar_url"`
 	CreatedAt int64          `bson:"created_at" json:"created_at"`
 	UpdatedAt int64          `bson:"updated_at" json:"updated_at"`
 }
