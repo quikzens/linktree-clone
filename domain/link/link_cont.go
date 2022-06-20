@@ -139,3 +139,29 @@ func DeleteLink(c *gin.Context) {
 
 	util.SendSuccess(c, nil)
 }
+
+func UpdateLinkOrder(c *gin.Context) {
+	payload, _ := c.Get("user")
+	userPayload, _ := payload.(*util.UserPayload)
+	userEmail := userPayload.Email
+
+	var req updateLinkOrderRequest
+	err := c.Bind(&req)
+	if err != nil {
+		util.SendBadRequest(c, err)
+		return
+	}
+
+	_, err = db.UserColl.UpdateOne(context.TODO(), bson.M{"email": userEmail}, bson.M{
+		"$set": updateUserLinks{
+			Links:     req.Links,
+			UpdatedAt: time.Now().Unix(),
+		},
+	})
+	if err != nil {
+		util.SendServerError(c, err)
+		return
+	}
+
+	util.SendSuccess(c, nil)
+}

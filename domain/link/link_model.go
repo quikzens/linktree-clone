@@ -17,6 +17,10 @@ type updateLinkRequest struct {
 	UpdatedAt int64  `bson:"updated_at"`
 }
 
+type updateLinkOrderRequest struct {
+	Links []string `bson:"links" json:"links"`
+}
+
 type userLinks struct {
 	Links []string `bson:"links"`
 }
