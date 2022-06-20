@@ -19,12 +19,13 @@ func CreateLink(c *gin.Context) {
 	userEmail := userPayload.Email
 
 	newLinkID := uuid.NewString()
+	boolean := true
 	newLink := link{
 		ID:         newLinkID,
 		EmailOwner: userEmail,
 		Title:      "Title",
 		Url:        "Url",
-		IsActive:   true,
+		IsActive:   &boolean,
 		CreatedAt:  time.Now().Unix(),
 		UpdatedAt:  0,
 	}
