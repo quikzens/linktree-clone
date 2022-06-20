@@ -64,14 +64,26 @@ func Callback(c *gin.Context) {
 
 	// if it's a new user (check by email address):
 	// create new document in db to keep it's links
-	err = db.UserColl.FindOne(context.TODO(), bson.M{"email": userData.Email()}).Decode(&bson.M{})
+	var userDB user
+	userPayload := util.UserPayload{
+		ID:        uuid.NewString(),
+		Name:      userData.Name(),
+		Email:     userData.Email(),
+		AvatarUrl: userData.AvatarURL(),
+		IssuedAt:  time.Now(),
+		ExpiredAt: time.Now().Add(24 * time.Hour),
+	}
+
+	err = db.UserColl.FindOne(context.TODO(), bson.M{"email": userData.Email()}).Decode(&userDB)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
+			newUsername := strings.ReplaceAll(strings.ToLower(userData.Name()), " ", "_") + util.RandomString(10)
 			_, err := db.UserColl.InsertOne(context.TODO(), user{
 				ID:        uuid.NewString(),
-				Username:  strings.ReplaceAll(strings.ToLower(userData.Name()), " ", "_") + util.RandomString(10),
+				Username:  newUsername,
 				Email:     userData.Email(),
 				Links:     []string{},
+				AvatarURL: userData.AvatarURL(),
 				CreatedAt: time.Now().Unix(),
 				UpdatedAt: 0,
 			})
@@ -79,20 +91,16 @@ func Callback(c *gin.Context) {
 				util.SendServerError(c, err)
 				return
 			}
+			userPayload.Username = newUsername
 		} else {
 			util.SendServerError(c, err)
 			return
 		}
+	} else {
+		userPayload.Username = userDB.Username
 	}
 
-	token, _, err := util.CreateToken(&util.UserPayload{
-		ID:        uuid.NewString(),
-		Name:      userData.Name(),
-		Email:     userData.Email(),
-		AvatarUrl: userData.AvatarURL(),
-		IssuedAt:  time.Now(),
-		ExpiredAt: time.Now().Add(24 * time.Hour),
-	})
+	token, _, err := util.CreateToken(&userPayload)
 	if err != nil {
 		util.SendServerError(c, err)
 		return
@@ -115,6 +123,7 @@ func CheckAuth(c *gin.Context) {
 	userPayload, _ := payload.(*util.UserPayload)
 
 	util.SendSuccess(c, gin.H{
+		"username":        userPayload.Username,
 		"user_name":       userPayload.Name,
 		"user_email":      userPayload.Email,
 		"user_avatar_url": userPayload.AvatarUrl,
@@ -147,6 +156,7 @@ func GetUser(c *gin.Context) {
 		Username:  user.Username,
 		Email:     user.Email,
 		Links:     userLinks,
+		AvatarURL: user.AvatarURL,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	})
