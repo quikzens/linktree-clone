@@ -17,6 +17,7 @@ var (
 
 type UserPayload struct {
 	ID        string    `json:"id"`
+	Username  string    `json:"username"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	AvatarUrl string    `json:"avatar_url"`
