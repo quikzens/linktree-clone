@@ -1,0 +1,11 @@
+.link-item {
+  user-select: none;
+}
+
+.link-preview {
+  width: 350px;
+  height: 725px;
+  border: 10px solid #333;
+  border-radius: 2rem;
+  transform: scale(0.6);
+}
