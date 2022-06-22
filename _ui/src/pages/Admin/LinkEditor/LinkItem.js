@@ -6,12 +6,14 @@ import Switch from '@mui/material/Switch'
 import { API, configJSON } from '../../../config/api'
 
 const DragHandle = sortableHandle(() => (
-  <span>
-    <BsThreeDotsVertical />
-  </span>
+  <div className="link-item-dragger p-4 is-flex is-align-items-center">
+    <span>
+      <BsThreeDotsVertical />
+    </span>
+  </div>
 ))
 
-const LinkItem = sortableElement(({ value, deleteLink }) => {
+const LinkItem = sortableElement(({ value, deleteLink, setLinks }) => {
   const [link, setLink] = useState({
     id: value.id,
     title: value.title,
@@ -26,12 +28,22 @@ const LinkItem = sortableElement(({ value, deleteLink }) => {
   }
 
   const updateLink = async (name, value) => {
-    console.log(name, value)
     setLink((prev) => {
       return {
         ...prev,
         [name]: value,
       }
+    })
+    setLinks((prev) => {
+      return prev.map((item) => {
+        if (link.id === item.id) {
+          return {
+            ...item,
+            [name]: value,
+          }
+        }
+        return item
+      })
     })
 
     try {
@@ -52,33 +64,33 @@ const LinkItem = sortableElement(({ value, deleteLink }) => {
   }
 
   return (
-    <div className="link-item is-flex card mb-4 is-two-thirds w-60">
-      <div className="p-4 is-flex is-align-items-center">
-        <DragHandle />
-      </div>
-      <div className="is-flex is-justify-content-space-between p-4 w-100">
+    <div className="link-item is-flex card mb-4">
+      <DragHandle />
+      <div className="is-flex is-justify-content-space-between is-align-items-center p-4 w-100">
         <div>
           <form className="is-flex is-flex-direction-column">
             <input
               type="text"
+              className="link-item-input input-title"
               defaultValue={link.title}
               onBlur={(e) => updateLink('title', e.target.value)}
               onKeyDown={blurOnEnter}
             />
             <input
               type="text"
+              className="link-item-input input-url"
               defaultValue={link.url}
               onBlur={(e) => updateLink('url', e.target.value)}
               onKeyDown={blurOnEnter}
             />
           </form>
         </div>
-        <div className="is-flex is-flex-direction-column is-align-items-end">
+        <div className="link-item-cta is-flex is-flex-direction-column is-justify-content-space-between is-align-items-end">
           <Switch
             checked={link.is_active}
             onClick={() => updateLink('is_active', !link.is_active)}
           />
-          <div onClick={() => deleteLink(link.id)}>
+          <div onClick={() => deleteLink(link.id)} className="link-item-del">
             <BsTrash />
           </div>
         </div>

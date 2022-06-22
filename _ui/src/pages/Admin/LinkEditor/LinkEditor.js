@@ -8,27 +8,26 @@ import './LinkEditor.css'
 import LinkItem from './LinkItem'
 
 const SortableContainer = sortableContainer(({ children }) => {
-  return (
-    <div className="is-flex is-align-items-center is-flex-direction-column">
-      {children}
-    </div>
-  )
+  return <div className="w-60">{children}</div>
 })
 
-export default function LinkEditor() {
+export default function LinkEditor({
+  links,
+  setLinks,
+  isFetchLoading,
+  setFetchLoading,
+}) {
   const { loggedInUser } = useUser()
-  const [links, setLinks] = useState([])
-  const [isLoading, setLoading] = useState(true)
 
   const fetchLinks = async () => {
-    setLoading(true)
+    setFetchLoading(true)
 
     try {
       const response = await API.get(`/user/${loggedInUser.username}`, {
         withCredentials: true,
       })
       setLinks(response.data.data.links)
-      setTimeout(() => setLoading(false), 100)
+      setTimeout(() => setFetchLoading(false), 100)
     } catch (err) {
       console.log('error', `Error Fetch Data From API`)
     }
@@ -98,13 +97,13 @@ export default function LinkEditor() {
 
   return (
     <div>
-      {isLoading ? (
+      {isFetchLoading ? (
         <div className="w-100 d-flex jc-center">
           <Loading size="medium" color="gray" />
         </div>
       ) : (
-        <>
-          <button class="button is-primary" onClick={createLink}>
+        <div className="is-flex is-align-items-center is-flex-direction-column">
+          <button class="button is-primary mb-5 w-30" onClick={createLink}>
             Add New Link
           </button>
           <SortableContainer onSortEnd={onSortEnd} useDragHandle>
@@ -114,10 +113,11 @@ export default function LinkEditor() {
                 index={index}
                 value={link}
                 deleteLink={deleteLink}
+                setLinks={setLinks}
               />
             ))}
           </SortableContainer>
-        </>
+        </div>
       )}
     </div>
   )
