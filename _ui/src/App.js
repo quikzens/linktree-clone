@@ -4,6 +4,7 @@ import { UserProvider } from './contexts/UserContext'
 import PrivatePage from './pages/PrivateRoute'
 import Home from './pages/Home/Home'
 import Admin from './pages/Admin/Admin'
+import Links from './pages/Links/Links'
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
               </PrivatePage>
             }
           />
+          <Route path="/:username" element={<Links />} />
         </Routes>
       </BrowserRouter>
     </UserProvider>
