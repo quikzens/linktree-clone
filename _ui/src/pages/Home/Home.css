@@ -1,0 +1,10 @@
+.page-home .title {
+  font-size: 48px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.page-home .home-container {
+  margin-top: 10rem;
+  height: 500px;
+}
